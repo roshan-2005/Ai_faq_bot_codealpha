@@ -2,8 +2,14 @@ import os
 import json
 import urllib.request
 from dotenv import load_dotenv
+import streamlit as st
 
 def get_gemini_api_key():
+    # 1. Try Streamlit Secrets (for Streamlit Cloud deployment)
+    if "GEMINI_API_KEY" in st.secrets:
+        return st.secrets["GEMINI_API_KEY"]
+    
+    # 2. Fall back to environment / dotenv (for local development)
     base_dir = os.path.dirname(os.path.abspath(__file__))
     dotenv_path = os.path.abspath(os.path.join(base_dir, "..", ".env"))
     load_dotenv(dotenv_path, override=True)
