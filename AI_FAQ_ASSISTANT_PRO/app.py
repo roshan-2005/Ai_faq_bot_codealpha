@@ -13,7 +13,7 @@ from utils.rag_engine import (
     calculate_reading_time,
     extract_intent_and_difficulty
 )
-from utils.speech import speech_to_text, text_to_speech
+from utils.speech import speech_to_text, text_to_speech, SPEECH_REC_AVAILABLE, TTS_AVAILABLE
 from utils.analytics import update_analytics, generate_dashboard_figures
 
 st.set_page_config(page_title="AI FAQ Assistant Pro", page_icon="⚡", layout="wide", initial_sidebar_state="expanded")
@@ -121,12 +121,13 @@ with center_col:
         with col_btn:
             submit_search = st.form_submit_button("🔍")
             
-    if st.button("🎤 Voice Input", help="Click to use voice recognition"):
-        with st.spinner("Listening..."):
-            recognized_text = speech_to_text()
-            if recognized_text and not recognized_text.startswith("Timeout"):
-                st.session_state.voice_input = recognized_text
-                st.rerun()
+    if SPEECH_REC_AVAILABLE:
+        if st.button("🎤 Voice Input", help="Click to use voice recognition"):
+            with st.spinner("Listening..."):
+                recognized_text = speech_to_text()
+                if recognized_text and not recognized_text.startswith("Timeout"):
+                    st.session_state.voice_input = recognized_text
+                    st.rerun()
 
     # Search Logic
     sidebar_query = st.session_state.pop("sidebar_query", None)
@@ -218,11 +219,12 @@ with center_col:
         """.replace('\n\n', '\n'), unsafe_allow_html=True)
         
         # Action Buttons below AI Card
-        col_action1, col_action2 = st.columns([1, 10])
-        with col_action1:
-            if st.button("🔊", key=f"speak_{idx}", help="Read aloud"):
-                text_to_speech(chat['answer'])
-        st.markdown("<br>", unsafe_allow_html=True)
+        if TTS_AVAILABLE:
+            col_action1, col_action2 = st.columns([1, 10])
+            with col_action1:
+                if st.button("🔊", key=f"speak_{idx}", help="Read aloud"):
+                    text_to_speech(chat['answer'])
+            st.markdown("<br>", unsafe_allow_html=True)
 
     # Learning Path (Smart Recommendations) for the latest query
     if st.session_state.chat_history and st.session_state.current_category:
