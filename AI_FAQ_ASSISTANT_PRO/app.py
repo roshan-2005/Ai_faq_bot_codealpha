@@ -46,24 +46,25 @@ if "current_category" not in st.session_state:
 
 # Load Data and Models
 @st.cache_data
-def load_faq_data():
-    faq_path = os.path.join(BASE_DIR, "data", "faq.csv")
-    if os.path.exists(faq_path):
-        return pd.read_csv(faq_path)
+def load_faq_data(path, mtime):
+    if os.path.exists(path):
+        return pd.read_csv(path)
     return pd.DataFrame(columns=['Question', 'Answer', 'Category'])
 
-df = load_faq_data()
+faq_path = os.path.join(BASE_DIR, "data", "faq.csv")
+mtime = os.path.getmtime(faq_path) if os.path.exists(faq_path) else 0
+df = load_faq_data(faq_path, mtime)
 model = load_embedding_model()
 
 @st.cache_resource
-def get_index(_df, _model):
+def get_index(_df, _model, mtime):
     if _df.empty:
         return None
     questions = _df['Question'].tolist()
     embeddings = get_embeddings(questions, _model)
     return build_faiss_index(embeddings)
 
-faiss_index = get_index(df, model)
+faiss_index = get_index(df, model, mtime)
 
 # ==========================================
 # LEFT PANEL (SIDEBAR)
