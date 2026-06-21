@@ -4,7 +4,9 @@ import urllib.request
 from dotenv import load_dotenv
 
 def get_gemini_api_key():
-    load_dotenv(override=True)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    dotenv_path = os.path.abspath(os.path.join(base_dir, "..", ".env"))
+    load_dotenv(dotenv_path, override=True)
     return os.getenv("GEMINI_API_KEY")
 
 def generate_rag_response(user_question, retrieved_faqs):

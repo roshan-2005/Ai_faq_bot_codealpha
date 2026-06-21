@@ -18,10 +18,14 @@ from utils.analytics import update_analytics, generate_dashboard_figures
 
 st.set_page_config(page_title="AI FAQ Assistant Pro", page_icon="⚡", layout="wide", initial_sidebar_state="expanded")
 
+# Absolute path resolution relative to this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Load Premium CSS
 def load_css():
     try:
-        with open("assets/style.css", "r") as f:
+        css_path = os.path.join(BASE_DIR, "assets", "style.css")
+        with open(css_path, "r") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         pass
@@ -43,8 +47,9 @@ if "current_category" not in st.session_state:
 # Load Data and Models
 @st.cache_data
 def load_faq_data():
-    if os.path.exists("data/faq.csv"):
-        return pd.read_csv("data/faq.csv")
+    faq_path = os.path.join(BASE_DIR, "data", "faq.csv")
+    if os.path.exists(faq_path):
+        return pd.read_csv(faq_path)
     return pd.DataFrame(columns=['Question', 'Answer', 'Category'])
 
 df = load_faq_data()
