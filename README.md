@@ -75,8 +75,3 @@ AI-FAQ-Assistant/
 * Chat history management
 * RAG (Retrieval-Augmented Generation) integration
 * Analytics dashboard
-
-## 👨‍💻 Author
-
-Roshan V C
-Built to simplify information access through Generative AI-powered conversations.
